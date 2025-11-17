@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import ProfileEdit from './pages/ProfileEdit';
 import Discover from './pages/Discover';
 import Search from './pages/Search';
+import Favorites from './pages/Favorites';
 
 // 受保护的路由组件
 const ProtectedRoute = ({ children }) => {
@@ -54,6 +55,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <ProfileEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/favorites"
+                  element={
+                    <ProtectedRoute>
+                      <Favorites />
                     </ProtectedRoute>
                   }
                 />

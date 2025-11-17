@@ -225,3 +225,74 @@ exports.deleteVideo = async (req, res) => {
     });
   }
 };
+
+// @desc    Bookmark/Unbookmark video
+// @route   POST /api/videos/:id/bookmark
+// @access  Private
+exports.bookmarkVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: 'Video not found'
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+    const alreadyBookmarked = user.favoriteVideos.includes(video._id);
+
+    if (alreadyBookmarked) {
+      // Remove bookmark
+      user.favoriteVideos = user.favoriteVideos.filter(
+        id => id.toString() !== video._id.toString()
+      );
+    } else {
+      // Add bookmark
+      user.favoriteVideos.push(video._id);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      data: {
+        bookmarked: !alreadyBookmarked,
+        message: alreadyBookmarked ? 'Removed from favorites' : 'Added to favorites'
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Get user's favorite videos
+// @route   GET /api/videos/favorites
+// @access  Private
+exports.getFavoriteVideos = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .populate({
+        path: 'favoriteVideos',
+        populate: {
+          path: 'user',
+          select: 'username avatar verified'
+        },
+        options: { sort: { createdAt: -1 } }
+      });
+
+    res.json({
+      success: true,
+      data: user.favoriteVideos || []
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

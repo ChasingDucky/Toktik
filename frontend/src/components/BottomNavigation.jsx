@@ -5,7 +5,7 @@ import {
   Home,
   Search,
   AddCircle,
-  Notifications,
+  Bookmark,
   Person,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
@@ -20,7 +20,7 @@ const BottomNavigation = () => {
     if (path === '/') return 0;
     if (path === '/discover') return 1;
     if (path === '/upload') return 2;
-    if (path === '/notifications') return 3;
+    if (path === '/favorites') return 3;
     if (path.startsWith('/profile')) return 4;
     return 0;
   };
@@ -42,7 +42,7 @@ const BottomNavigation = () => {
         break;
       case 3:
         if (isAuthenticated) {
-          navigate('/notifications');
+          navigate('/favorites');
         } else {
           navigate('/login');
         }
@@ -78,7 +78,7 @@ const BottomNavigation = () => {
           label="上传"
           icon={<AddCircle sx={{ fontSize: 36, color: 'primary.main' }} />}
         />
-        <BottomNavigationAction label="通知" icon={<Notifications />} />
+        <BottomNavigationAction label="收藏" icon={<Bookmark />} />
         <BottomNavigationAction label="我的" icon={<Person />} />
       </MuiBottomNavigation>
     </Paper>

@@ -50,11 +50,13 @@ export const videoAPI = {
     api.get(`/videos/feed?page=${page}&limit=${limit}`),
   getVideo: (id) => api.get(`/videos/${id}`),
   getUserVideos: (userId) => api.get(`/videos/user/${userId}`),
+  getFavorites: () => api.get('/videos/favorites'),
   uploadVideo: (formData) =>
     api.post('/videos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   likeVideo: (id) => api.post(`/videos/${id}/like`),
+  bookmarkVideo: (id) => api.post(`/videos/${id}/bookmark`),
   deleteVideo: (id) => api.delete(`/videos/${id}`),
 };
 
