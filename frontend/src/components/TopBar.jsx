@@ -147,6 +147,9 @@ const TopBar = () => {
                 <MenuItem onClick={() => { navigate('/upload'); handleMenuClose(); }}>
                   上传视频
                 </MenuItem>
+                <MenuItem onClick={() => { navigate('/about'); handleMenuClose(); }}>
+                  关于TokTik
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>退出登录</MenuItem>
               </Menu>
             </>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Box } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { SnackbarProvider } from './context/SnackbarContext';
 import TopBar from './components/TopBar';
 import BottomNavigation from './components/BottomNavigation';
 import Home from './pages/Home';
@@ -14,6 +15,7 @@ import ProfileEdit from './pages/ProfileEdit';
 import Discover from './pages/Discover';
 import Search from './pages/Search';
 import Favorites from './pages/Favorites';
+import About from './pages/About';
 
 // 受保护的路由组件
 const ProtectedRoute = ({ children }) => {
@@ -30,49 +32,52 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <TopBar />
+        <SnackbarProvider>
+          <Router>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <TopBar />
 
-            <Box sx={{ flex: 1, pb: { xs: 7, md: 0 } }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/discover" element={<Discover />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route
-                  path="/upload"
-                  element={
-                    <ProtectedRoute>
-                      <Upload />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/profile/:userId" element={<Profile />} />
-                <Route
-                  path="/profile/edit"
-                  element={
-                    <ProtectedRoute>
-                      <ProfileEdit />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/favorites"
-                  element={
-                    <ProtectedRoute>
-                      <Favorites />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
+              <Box sx={{ flex: 1, pb: { xs: 7, md: 0 } }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/discover" element={<Discover />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route
+                    path="/upload"
+                    element={
+                      <ProtectedRoute>
+                        <Upload />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/profile/:userId" element={<Profile />} />
+                  <Route
+                    path="/profile/edit"
+                    element={
+                      <ProtectedRoute>
+                        <ProfileEdit />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/favorites"
+                    element={
+                      <ProtectedRoute>
+                        <Favorites />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/about" element={<About />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </Box>
+
+              <BottomNavigation />
             </Box>
-
-            <BottomNavigation />
-          </Box>
-        </Router>
+          </Router>
+        </SnackbarProvider>
       </AuthProvider>
     </ThemeProvider>
   );

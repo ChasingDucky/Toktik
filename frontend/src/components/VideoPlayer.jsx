@@ -17,6 +17,7 @@ import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 import { videoAPI, commentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useSnackbar } from '../context/SnackbarContext';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
@@ -29,6 +30,7 @@ const VideoPlayer = ({ video, onVideoChange }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const { showSuccess, showError, showInfo } = useSnackbar();
 
   // 使用IntersectionObserver检测视频是否在视口中
   const { ref, inView } = useInView({
@@ -88,7 +90,7 @@ const VideoPlayer = ({ video, onVideoChange }) => {
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      // 提示用户登录
+      showInfo('请先登录');
       return;
     }
 
@@ -96,26 +98,37 @@ const VideoPlayer = ({ video, onVideoChange }) => {
       const response = await videoAPI.likeVideo(video._id);
       setLiked(response.data.liked);
       setLikeCount(response.data.likeCount);
+      if (response.data.liked) {
+        showSuccess('点赞成功');
+      }
     } catch (error) {
       console.error('Failed to like video:', error);
+      showError('操作失败，请重试');
     }
   };
 
   const handleBookmark = async () => {
     if (!isAuthenticated) {
-      // 提示用户登录
+      showInfo('请先登录');
       return;
     }
 
     try {
       const response = await videoAPI.bookmarkVideo(video._id);
       setBookmarked(response.data.bookmarked);
+      if (response.data.bookmarked) {
+        showSuccess('已添加到收藏');
+      } else {
+        showInfo('已取消收藏');
+      }
     } catch (error) {
       console.error('Failed to bookmark video:', error);
+      showError('操作失败，请重试');
     }
   };
 
   const handleShare = async () => {
+    // 优先使用原生分享API
     if (navigator.share) {
       try {
         await navigator.share({
@@ -124,7 +137,19 @@ const VideoPlayer = ({ video, onVideoChange }) => {
           url: window.location.href,
         });
       } catch (error) {
-        console.error('Error sharing:', error);
+        // 用户取消分享时不显示错误
+        if (error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+        }
+      }
+    } else {
+      // 降级到复制链接
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess('链接已复制到剪贴板');
+      } catch (error) {
+        console.error('Failed to copy:', error);
+        showError('复制失败，请手动复制链接');
       }
     }
   };
