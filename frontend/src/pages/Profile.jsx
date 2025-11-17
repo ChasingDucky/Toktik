@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -25,6 +25,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { user: currentUser, isAuthenticated } = useAuth();
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -146,7 +147,11 @@ const Profile = () => {
           </Box>
 
           {isOwnProfile ? (
-            <Button variant="outlined" startIcon={<Edit />}>
+            <Button
+              variant="outlined"
+              startIcon={<Edit />}
+              onClick={() => navigate('/profile/edit')}
+            >
               编辑资料
             </Button>
           ) : (

@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Upload from './pages/Upload';
 import Profile from './pages/Profile';
+import ProfileEdit from './pages/ProfileEdit';
 import Discover from './pages/Discover';
 import Search from './pages/Search';
 
@@ -48,6 +49,14 @@ function App() {
                   }
                 />
                 <Route path="/profile/:userId" element={<Profile />} />
+                <Route
+                  path="/profile/edit"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileEdit />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </Box>

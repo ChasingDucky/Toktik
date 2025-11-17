@@ -74,6 +74,7 @@ export const userAPI = {
     api.put('/users/profile', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  changePassword: (passwordData) => api.put('/users/password', passwordData),
   followUser: (id) => api.post(`/users/${id}/follow`),
   searchUsers: (query) => api.get(`/users/search?q=${query}`),
 };
