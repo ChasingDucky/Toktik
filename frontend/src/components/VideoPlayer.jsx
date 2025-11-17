@@ -5,6 +5,8 @@ import {
   FavoriteBorder,
   ChatBubbleOutline,
   Share,
+  Bookmark,
+  BookmarkBorder,
   MoreVert,
   VolumeUp,
   VolumeOff,
@@ -24,6 +26,7 @@ const VideoPlayer = ({ video, onVideoChange }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(video.likes?.length || 0);
+  const [bookmarked, setBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
@@ -49,7 +52,23 @@ const VideoPlayer = ({ video, onVideoChange }) => {
     if (user && video.likes?.includes(user._id)) {
       setLiked(true);
     }
+    // Check if video is bookmarked (we'll need to pass this from parent or fetch)
+    checkIfBookmarked();
   }, [user, video]);
+
+  const checkIfBookmarked = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      // We'll check by fetching user's favorites and seeing if this video is in it
+      // For now, we can set it based on a prop or make an API call
+      const response = await videoAPI.getFavorites();
+      const isFavorite = response.data.some(v => v._id === video._id);
+      setBookmarked(isFavorite);
+    } catch (error) {
+      console.error('Failed to check bookmark status:', error);
+    }
+  };
 
   const handlePlayPause = () => {
     const videoElement = videoRef.current;
@@ -79,6 +98,20 @@ const VideoPlayer = ({ video, onVideoChange }) => {
       setLikeCount(response.data.likeCount);
     } catch (error) {
       console.error('Failed to like video:', error);
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!isAuthenticated) {
+      // 提示用户登录
+      return;
+    }
+
+    try {
+      const response = await videoAPI.bookmarkVideo(video._id);
+      setBookmarked(response.data.bookmarked);
+    } catch (error) {
+      console.error('Failed to bookmark video:', error);
     }
   };
 
@@ -208,6 +241,22 @@ const VideoPlayer = ({ video, onVideoChange }) => {
             {video.comments?.length || 0}
           </Typography>
         </Box>
+
+        {/* 收藏按钮 */}
+        <motion.div whileTap={{ scale: 1.2 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <IconButton onClick={handleBookmark} sx={{ color: 'white' }}>
+              {bookmarked ? (
+                <Bookmark sx={{ fontSize: 32, color: '#ffc107' }} />
+              ) : (
+                <BookmarkBorder sx={{ fontSize: 32 }} />
+              )}
+            </IconButton>
+            <Typography variant="caption" sx={{ color: 'white', display: 'block' }}>
+              {bookmarked ? '已收藏' : '收藏'}
+            </Typography>
+          </Box>
+        </motion.div>
 
         {/* 分享按钮 */}
         <Box sx={{ textAlign: 'center' }}>
