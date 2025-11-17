@@ -6,12 +6,16 @@ const helmet = require('helmet');
 const compression = require('compression');
 const path = require('path');
 const connectDB = require('./config/database');
+const { autoSeed } = require('./utils/autoSeed');
 
 // Initialize express app
 const app = express();
 
-// Connect to database
-connectDB();
+// Connect to database and auto-seed if empty
+connectDB().then(() => {
+  // Auto-seed test data if database is empty
+  autoSeed();
+});
 
 // Middleware
 app.use(cors());
