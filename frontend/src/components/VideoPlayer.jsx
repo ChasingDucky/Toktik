@@ -29,6 +29,9 @@ const VideoPlayer = ({ video, onVideoChange }) => {
   const [likeCount, setLikeCount] = useState(video.likes?.length || 0);
   const [bookmarked, setBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const { user, isAuthenticated } = useAuth();
   const { showSuccess, showError, showInfo } = useSnackbar();
 
@@ -41,6 +44,20 @@ const VideoPlayer = ({ video, onVideoChange }) => {
     const videoElement = videoRef.current;
     if (!videoElement) return;
 
+    // 视频元数据加载完成
+    const handleLoadedMetadata = () => {
+      setDuration(videoElement.duration);
+    };
+
+    // 视频播放进度更新
+    const handleTimeUpdate = () => {
+      setCurrentTime(videoElement.currentTime);
+      setProgress((videoElement.currentTime / videoElement.duration) * 100);
+    };
+
+    videoElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+    videoElement.addEventListener('timeupdate', handleTimeUpdate);
+
     if (inView) {
       videoElement.play().catch(console.error);
       setIsPlaying(true);
@@ -48,6 +65,11 @@ const VideoPlayer = ({ video, onVideoChange }) => {
       videoElement.pause();
       setIsPlaying(false);
     }
+
+    return () => {
+      videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      videoElement.removeEventListener('timeupdate', handleTimeUpdate);
+    };
   }, [inView]);
 
   useEffect(() => {
@@ -86,6 +108,19 @@ const VideoPlayer = ({ video, onVideoChange }) => {
     const videoElement = videoRef.current;
     videoElement.muted = !isMuted;
     setIsMuted(!isMuted);
+  };
+
+  const handleProgressClick = (e) => {
+    const videoElement = videoRef.current;
+    const progressBar = e.currentTarget;
+    const clickPosition = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth;
+    videoElement.currentTime = clickPosition * videoElement.duration;
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handleLike = async () => {
@@ -294,11 +329,68 @@ const VideoPlayer = ({ video, onVideoChange }) => {
         </Box>
       </Box>
 
-      {/* 底部信息栏 */}
+      {/* 视频进度条 */}
       <Box
         sx={{
           position: 'absolute',
           bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+        }}
+      >
+        {/* 时间显示 */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            px: 2,
+            pb: 0.5,
+            background: 'linear-gradient(transparent, rgba(0,0,0,0.5))',
+          }}
+        >
+          <Typography variant="caption" sx={{ color: 'white', fontSize: '0.75rem' }}>
+            {formatTime(currentTime)}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'white', fontSize: '0.75rem' }}>
+            {formatTime(duration)}
+          </Typography>
+        </Box>
+
+        {/* 进度条 */}
+        <Box
+          onClick={handleProgressClick}
+          sx={{
+            width: '100%',
+            height: 4,
+            backgroundColor: 'rgba(255,255,255,0.3)',
+            cursor: 'pointer',
+            position: 'relative',
+            '&:hover': {
+              height: 6,
+            },
+            transition: 'height 0.2s',
+          }}
+        >
+          <Box
+            sx={{
+              height: '100%',
+              width: `${progress}%`,
+              backgroundColor: '#fe2c55',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              transition: 'width 0.1s',
+            }}
+          />
+        </Box>
+      </Box>
+
+      {/* 底部信息栏 */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 4,
           left: 0,
           right: 0,
           padding: 2,
