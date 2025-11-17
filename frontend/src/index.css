@@ -1,0 +1,61 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* 移除默认滚动条 */
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* Material Design 3 CSS变量 */
+:root {
+  --md-sys-color-primary: #6200ee;
+  --md-sys-color-secondary: #03dac6;
+  --md-sys-color-error: #b00020;
+  --md-sys-color-background: #ffffff;
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-on-secondary: #000000;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-on-background: #000000;
+  --md-sys-color-on-surface: #000000;
+}
+
+/* 深色模式变量 */
+[data-theme='dark'] {
+  --md-sys-color-primary: #bb86fc;
+  --md-sys-color-secondary: #03dac6;
+  --md-sys-color-error: #cf6679;
+  --md-sys-color-background: #121212;
+  --md-sys-color-surface: #121212;
+  --md-sys-color-on-primary: #000000;
+  --md-sys-color-on-secondary: #000000;
+  --md-sys-color-on-error: #000000;
+  --md-sys-color-on-background: #ffffff;
+  --md-sys-color-on-surface: #ffffff;
+}
+
+/* 视频播放器自定义样式 */
+video {
+  outline: none;
+}
+
+/* 链接样式 */
+a {
+  color: inherit;
+  text-decoration: none;
+}

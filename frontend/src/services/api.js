@@ -1,0 +1,81 @@
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// 创建axios实例
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// 请求拦截器 - 添加token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// 响应拦截器 - 处理错误
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// 认证API
+export const authAPI = {
+  register: (userData) => api.post('/auth/register', userData),
+  login: (credentials) => api.post('/auth/login', credentials),
+  getMe: () => api.get('/auth/me'),
+};
+
+// 视频API
+export const videoAPI = {
+  getFeed: (page = 1, limit = 10) =>
+    api.get(`/videos/feed?page=${page}&limit=${limit}`),
+  getVideo: (id) => api.get(`/videos/${id}`),
+  getUserVideos: (userId) => api.get(`/videos/user/${userId}`),
+  uploadVideo: (formData) =>
+    api.post('/videos', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  likeVideo: (id) => api.post(`/videos/${id}/like`),
+  deleteVideo: (id) => api.delete(`/videos/${id}`),
+};
+
+// 评论API
+export const commentAPI = {
+  getComments: (videoId) => api.get(`/videos/${videoId}/comments`),
+  addComment: (videoId, text, parentCommentId = null) =>
+    api.post(`/videos/${videoId}/comments`, { text, parentCommentId }),
+  likeComment: (id) => api.post(`/comments/${id}/like`),
+  deleteComment: (id) => api.delete(`/comments/${id}`),
+};
+
+// 用户API
+export const userAPI = {
+  getProfile: (id) => api.get(`/users/${id}`),
+  updateProfile: (formData) =>
+    api.put('/users/profile', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  followUser: (id) => api.post(`/users/${id}/follow`),
+  searchUsers: (query) => api.get(`/users/search?q=${query}`),
+};
+
+export default api;
