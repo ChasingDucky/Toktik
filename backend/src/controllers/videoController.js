@@ -1,5 +1,6 @@
 const Video = require('../models/Video');
 const User = require('../models/User');
+const { createNotification } = require('./notificationController');
 
 // @desc    Upload new video
 // @route   POST /api/videos
@@ -162,6 +163,14 @@ exports.likeVideo = async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, {
         $addToSet: { likedVideos: video._id }
       });
+
+      // Create notification for video owner
+      await createNotification(
+        video.user,
+        req.user._id,
+        'like',
+        { videoId: video._id }
+      );
     }
 
     await video.save();

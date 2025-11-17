@@ -14,13 +14,13 @@ import {
 } from '@mui/material';
 import {
   Search,
-  Notifications,
   Brightness4,
   Brightness7,
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import NotificationMenu from './NotificationMenu';
 
 const TopBar = () => {
   const navigate = useNavigate();
@@ -121,9 +121,7 @@ const TopBar = () => {
           {isAuthenticated ? (
             <>
               {/* 通知 */}
-              <IconButton color="inherit">
-                <Notifications />
-              </IconButton>
+              <NotificationMenu />
 
               {/* 用户菜单 */}
               <IconButton onClick={handleMenuOpen}>

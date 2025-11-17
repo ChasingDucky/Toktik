@@ -34,6 +34,7 @@ app.use('/api/videos', require('./routes/videos'));
 app.use('/api', require('./routes/comments'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/discover', require('./routes/discover'));
+app.use('/api/notifications', require('./routes/notifications'));
 
 // Health check route
 app.get('/api/health', (req, res) => {

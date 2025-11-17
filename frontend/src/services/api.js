@@ -92,4 +92,14 @@ export const discoverAPI = {
     api.get(`/discover/search?q=${encodeURIComponent(query)}&type=${type}&page=${page}&limit=${limit}`),
 };
 
+// 通知API
+export const notificationAPI = {
+  getNotifications: (page = 1, limit = 20) =>
+    api.get(`/notifications?page=${page}&limit=${limit}`),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+  markAsRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: () => api.put('/notifications/read-all'),
+  deleteNotification: (id) => api.delete(`/notifications/${id}`),
+};
+
 export default api;

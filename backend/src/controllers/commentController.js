@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment');
 const Video = require('../models/Video');
+const { createNotification } = require('./notificationController');
 
 // @desc    Add comment to video
 // @route   POST /api/videos/:videoId/comments
@@ -30,9 +31,27 @@ exports.addComment = async (req, res) => {
 
     // If it's a reply, add to parent comment
     if (parentCommentId) {
-      await Comment.findByIdAndUpdate(parentCommentId, {
-        $push: { replies: comment._id }
-      });
+      const parentComment = await Comment.findByIdAndUpdate(
+        parentCommentId,
+        { $push: { replies: comment._id } },
+        { new: true }
+      );
+
+      // Create notification for parent comment author
+      await createNotification(
+        parentComment.user,
+        req.user._id,
+        'reply',
+        { videoId, commentId: comment._id, text: text.substring(0, 50) }
+      );
+    } else {
+      // Create notification for video owner
+      await createNotification(
+        video.user,
+        req.user._id,
+        'comment',
+        { videoId, commentId: comment._id, text: text.substring(0, 50) }
+      );
     }
 
     const populatedComment = await Comment.findById(comment._id)

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Video = require('../models/Video');
+const { createNotification } = require('./notificationController');
 
 // @desc    Get user profile
 // @route   GET /api/users/:id
@@ -106,6 +107,13 @@ exports.followUser = async (req, res) => {
       // Follow
       currentUser.following.push(userToFollow._id);
       userToFollow.followers.push(currentUser._id);
+
+      // Create notification for followed user
+      await createNotification(
+        userToFollow._id,
+        currentUser._id,
+        'follow'
+      );
     }
 
     await currentUser.save();
