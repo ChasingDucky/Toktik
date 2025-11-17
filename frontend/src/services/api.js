@@ -78,4 +78,17 @@ export const userAPI = {
   searchUsers: (query) => api.get(`/users/search?q=${query}`),
 };
 
+// 发现API
+export const discoverAPI = {
+  getTrending: (page = 1, limit = 20) =>
+    api.get(`/discover/trending?page=${page}&limit=${limit}`),
+  getAllTags: () => api.get('/discover/tags'),
+  getVideosByTag: (tag, page = 1, limit = 20) =>
+    api.get(`/discover/tags/${tag}?page=${page}&limit=${limit}`),
+  getRecommendedUsers: (limit = 10) =>
+    api.get(`/discover/users?limit=${limit}`),
+  search: (query, type = 'all', page = 1, limit = 20) =>
+    api.get(`/discover/search?q=${encodeURIComponent(query)}&type=${type}&page=${page}&limit=${limit}`),
+};
+
 export default api;

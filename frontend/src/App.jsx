@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Upload from './pages/Upload';
 import Profile from './pages/Profile';
+import Discover from './pages/Discover';
+import Search from './pages/Search';
 
 // 受保护的路由组件
 const ProtectedRoute = ({ children }) => {
@@ -33,6 +35,8 @@ function App() {
             <Box sx={{ flex: 1, pb: { xs: 7, md: 0 } }}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/discover" element={<Discover />} />
+                <Route path="/search" element={<Search />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route
