@@ -32,6 +32,7 @@
 - Framer Motion
 - Zustand (状态管理)
 - Vite
+- Nginx (生产环境)
 
 ### 后端
 - Node.js
@@ -41,11 +42,18 @@
 - Multer (文件上传)
 - Bcryptjs (密码加密)
 
+### DevOps
+- Docker
+- Docker Compose
+- Nginx反向代理
+
 ## 📦 项目结构
 
 ```
 Toktik/
+├── docker-compose.yml       # Docker编排配置
 ├── backend/                 # 后端服务
+│   ├── Dockerfile          # 后端Docker配置
 │   ├── src/
 │   │   ├── models/         # 数据模型
 │   │   ├── routes/         # API路由
@@ -58,6 +66,8 @@ Toktik/
 │   └── package.json
 │
 └── frontend/               # 前端应用
+    ├── Dockerfile          # 前端Docker配置
+    ├── nginx.conf          # Nginx配置
     ├── src/
     │   ├── components/     # React组件
     │   ├── pages/          # 页面组件
@@ -72,13 +82,61 @@ Toktik/
 
 ## 🚀 快速开始
 
-### 前置要求
+### 方式一：使用 Docker（推荐）🐳
 
+**前置要求：**
+- Docker >= 20.10
+- Docker Compose >= 2.0
+
+**一键启动：**
+```bash
+# 克隆项目
+git clone <repository-url>
+cd Toktik
+
+# 使用Docker Compose启动所有服务
+docker-compose up -d
+```
+
+**访问应用：**
+- 前端: http://localhost:8666
+- 后端API: http://localhost:8667
+- MongoDB: localhost:27017
+
+**常用命令：**
+```bash
+# 查看运行状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+
+# 停止服务并删除数据卷
+docker-compose down -v
+
+# 重新构建镜像
+docker-compose build
+
+# 重启服务
+docker-compose restart
+```
+
+**端口说明：**
+- `8666` - 前端Web服务
+- `8667` - 后端API服务
+- `27017` - MongoDB数据库
+
+### 方式二：本地开发环境
+
+**前置要求：**
 - Node.js >= 16.0.0
 - MongoDB >= 4.4
 - npm 或 yarn
 
-### 安装
+**安装步骤：**
 
 1. 克隆项目
 ```bash
@@ -104,7 +162,7 @@ cd ../frontend
 npm install
 ```
 
-### 运行
+**运行步骤：**
 
 1. 启动MongoDB
 ```bash
@@ -202,19 +260,27 @@ const MyComponent = () => {
 ## 🎯 环境变量
 
 ### 后端环境变量 (.env)
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/toktik
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRE=7d
-NODE_ENV=development
-MAX_FILE_SIZE=104857600
+```env
+PORT=5000                                      # 本地开发端口
+MONGODB_URI=mongodb://localhost:27017/toktik  # 数据库连接
+JWT_SECRET=your_jwt_secret_key                 # JWT密钥
+JWT_EXPIRE=7d                                  # Token过期时间
+NODE_ENV=development                           # 环境模式
+MAX_FILE_SIZE=104857600                        # 最大文件大小(100MB)
 ```
 
 ### 前端环境变量 (.env)
+```env
+VITE_API_URL=http://localhost:5000/api        # 本地开发API地址
 ```
-VITE_API_URL=http://localhost:5000/api
-```
+
+### Docker环境变量
+Docker部署时会自动使用以下配置：
+- 前端端口: `8666`
+- 后端端口: `8667`
+- MongoDB: 内部网络连接
+
+可以通过修改 `docker-compose.yml` 文件来自定义配置。
 
 ## 🤝 贡献
 

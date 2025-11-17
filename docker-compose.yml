@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # MongoDB数据库
+  mongodb:
+    image: mongo:7.0
+    container_name: toktik-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: toktik
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - toktik-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 后端API服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: toktik-backend
+    restart: unless-stopped
+    ports:
+      - "8667:8667"
+    environment:
+      - PORT=8667
+      - MONGODB_URI=mongodb://mongodb:27017/toktik
+      - JWT_SECRET=toktik_super_secret_jwt_key_2024
+      - JWT_EXPIRE=7d
+      - NODE_ENV=production
+      - MAX_FILE_SIZE=104857600
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - backend_logs:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - toktik-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8667/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 前端Web服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: toktik-frontend
+    restart: unless-stopped
+    ports:
+      - "8666:8666"
+    environment:
+      - VITE_API_URL=http://localhost:8667/api
+    depends_on:
+      - backend
+    networks:
+      - toktik-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8666"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  toktik-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  backend_logs:
+    driver: local
