@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BottomNavigation as MuiBottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { BottomNavigation as MuiBottomNavigation, BottomNavigationAction, Paper, useTheme } from '@mui/material';
 import {
   Home,
   Search,
@@ -10,11 +10,13 @@ import {
   Person,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { navGlassEffect } from '../utils/glassStyles';
 
 const BottomNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const theme = useTheme();
   const { user, isAuthenticated } = useAuth();
 
   const getActiveTab = () => {
@@ -70,8 +72,11 @@ const BottomNavigation = () => {
         right: 0,
         zIndex: 1000,
         display: { xs: 'block', md: 'none' },
+        ...navGlassEffect(theme),
+        borderTop: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+        borderRadius: 0,
       }}
-      elevation={3}
+      elevation={0}
     >
       <MuiBottomNavigation value={getActiveTab()} onChange={handleNavigation}>
         <BottomNavigationAction label={t('nav.home')} icon={<Home />} />

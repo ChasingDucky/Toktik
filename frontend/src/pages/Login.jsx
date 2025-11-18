@@ -11,12 +11,15 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  useTheme,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { cardGlassEffect } from '../utils/glassStyles';
 
 const Login = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,11 +55,12 @@ const Login = () => {
         }}
       >
         <Paper
-          elevation={6}
+          elevation={0}
           sx={{
             p: 4,
             width: '100%',
-            borderRadius: 4,
+            ...cardGlassEffect(theme),
+            borderRadius: '24px',
           }}
         >
           <Box sx={{ textAlign: 'center', mb: 3 }}>

@@ -12,6 +12,7 @@ import {
   Avatar,
   InputBase,
   alpha,
+  useTheme as useMuiTheme,
 } from '@mui/material';
 import {
   Search,
@@ -23,10 +24,12 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import NotificationMenu from './NotificationMenu';
 import LanguageSwitcher from './LanguageSwitcher';
+import { navGlassEffect, inputGlassEffect, menuGlassEffect } from '../utils/glassStyles';
 
 const TopBar = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const muiTheme = useMuiTheme();
   const { user, isAuthenticated, logout } = useAuth();
   const { mode, toggleMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -56,10 +59,10 @@ const TopBar = () => {
   return (
     <AppBar
       position="sticky"
-      elevation={1}
+      elevation={0}
       sx={{
         display: { xs: 'none', md: 'block' },
-        backgroundColor: 'background.paper',
+        ...navGlassEffect(muiTheme),
         color: 'text.primary',
       }}
     >
@@ -87,14 +90,18 @@ const TopBar = () => {
           sx={{
             position: 'relative',
             borderRadius: 20,
-            backgroundColor: alpha('#000', 0.05),
-            '&:hover': {
-              backgroundColor: alpha('#000', 0.08),
-            },
+            ...inputGlassEffect(muiTheme),
             marginRight: 2,
             width: { md: '300px', lg: '400px' },
             display: 'flex',
             alignItems: 'center',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'scale(1.02)',
+              boxShadow: muiTheme.palette.mode === 'dark'
+                ? '0 4px 20px 0 rgba(255, 255, 255, 0.1)'
+                : '0 4px 20px 0 rgba(0, 0, 0, 0.1)',
+            },
           }}
         >
           <InputBase
@@ -145,6 +152,13 @@ const TopBar = () => {
                 transformOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
+                }}
+                PaperProps={{
+                  sx: {
+                    ...menuGlassEffect(muiTheme),
+                    mt: 1.5,
+                    minWidth: 200,
+                  },
                 }}
               >
                 <MenuItem onClick={() => { navigate(`/profile/${user._id}`); handleMenuClose(); }}>

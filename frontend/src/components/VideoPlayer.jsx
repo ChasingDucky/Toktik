@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSnackbar } from '../context/SnackbarContext';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import { videoControlGlassEffect } from '../utils/glassStyles';
 
 const VideoPlayer = ({ video, onVideoChange }) => {
   const videoRef = useRef(null);
@@ -346,7 +347,7 @@ const VideoPlayer = ({ video, onVideoChange }) => {
             justifyContent: 'space-between',
             px: 2,
             pb: 0.5,
-            background: 'linear-gradient(transparent, rgba(0,0,0,0.5))',
+            ...videoControlGlassEffect(),
           }}
         >
           <Typography variant="caption" sx={{ color: 'white', fontSize: '0.75rem' }}>
@@ -394,7 +395,7 @@ const VideoPlayer = ({ video, onVideoChange }) => {
           left: 0,
           right: 0,
           padding: 2,
-          background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+          ...videoControlGlassEffect(),
           color: 'white',
         }}
       >
