@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { BottomNavigation as MuiBottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import {
   Home,
@@ -13,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 const BottomNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
 
   const getActiveTab = () => {
@@ -72,14 +74,14 @@ const BottomNavigation = () => {
       elevation={3}
     >
       <MuiBottomNavigation value={getActiveTab()} onChange={handleNavigation}>
-        <BottomNavigationAction label="首页" icon={<Home />} />
-        <BottomNavigationAction label="发现" icon={<Search />} />
+        <BottomNavigationAction label={t('nav.home')} icon={<Home />} />
+        <BottomNavigationAction label={t('nav.discover')} icon={<Search />} />
         <BottomNavigationAction
-          label="上传"
+          label={t('nav.upload')}
           icon={<AddCircle sx={{ fontSize: 36, color: 'primary.main' }} />}
         />
-        <BottomNavigationAction label="收藏" icon={<Bookmark />} />
-        <BottomNavigationAction label="我的" icon={<Person />} />
+        <BottomNavigationAction label={t('nav.favorites')} icon={<Bookmark />} />
+        <BottomNavigationAction label={t('nav.profile')} icon={<Person />} />
       </MuiBottomNavigation>
     </Paper>
   );

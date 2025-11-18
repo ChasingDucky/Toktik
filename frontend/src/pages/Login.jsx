@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Container,
   Box,
@@ -15,6 +16,7 @@ import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-materi
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -59,13 +61,13 @@ const Login = () => {
         >
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Typography variant="h3" fontWeight="bold" color="primary" gutterBottom>
-              TokTik
+              {t('app.name')}
             </Typography>
             <Typography variant="h5" gutterBottom>
-              登录
+              {t('auth.loginTitle')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              欢迎回来！
+              {t('app.slogan')}
             </Typography>
           </Box>
 
@@ -78,7 +80,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="邮箱"
+              label={t('auth.email')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -89,7 +91,7 @@ const Login = () => {
 
             <TextField
               fullWidth
-              label="密码"
+              label={t('auth.password')}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -118,12 +120,12 @@ const Login = () => {
               startIcon={<LoginIcon />}
               sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              {loading ? '登录中...' : '登录'}
+              {loading ? `${t('common.loading')}` : t('auth.login')}
             </Button>
 
             <Box sx={{ textAlign: 'center', mt: 2 }}>
               <Typography variant="body2">
-                还没有账号？{' '}
+                {t('auth.noAccount')}{' '}
                 <Link to="/register" style={{ textDecoration: 'none' }}>
                   <Typography
                     component="span"
@@ -131,7 +133,7 @@ const Login = () => {
                     color="primary"
                     fontWeight="bold"
                   >
-                    立即注册
+                    {t('auth.signUp')}
                   </Typography>
                 </Link>
               </Typography>

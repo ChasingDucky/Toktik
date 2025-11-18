@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { Box, Typography, Button, Container, Paper } from '@mui/material';
 import { Error as ErrorIcon, Refresh } from '@mui/icons-material';
 
@@ -43,6 +44,8 @@ class ErrorBoundary extends React.Component {
   };
 
   render() {
+    const { t } = this.props;
+
     if (this.state.hasError) {
       return (
         <Container maxWidth="sm" sx={{ mt: 8 }}>
@@ -62,10 +65,10 @@ class ErrorBoundary extends React.Component {
               }}
             />
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-              哎呀，出错了！
+              {t('error.title')}
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph sx={{ mt: 2 }}>
-              应用程序遇到了一个意外错误。我们已经记录了这个问题。
+              {t('error.message')}
             </Typography>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -93,19 +96,19 @@ class ErrorBoundary extends React.Component {
                 startIcon={<Refresh />}
                 onClick={this.handleReset}
               >
-                重试
+                {t('error.retry')}
               </Button>
               <Button
                 variant="contained"
                 startIcon={<Refresh />}
                 onClick={this.handleReload}
               >
-                刷新页面
+                {t('error.reload')}
               </Button>
             </Box>
 
             <Typography variant="caption" color="text.secondary" sx={{ mt: 3, display: 'block' }}>
-              如果问题持续存在，请联系我们的支持团队
+              {t('error.support')}
             </Typography>
           </Paper>
         </Container>
@@ -116,4 +119,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation()(ErrorBoundary);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   AppBar,
   Toolbar,
@@ -21,9 +22,11 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import NotificationMenu from './NotificationMenu';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const TopBar = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, isAuthenticated, logout } = useAuth();
   const { mode, toggleMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -95,7 +98,7 @@ const TopBar = () => {
           }}
         >
           <InputBase
-            placeholder="搜索..."
+            placeholder={t('search.placeholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{
@@ -113,6 +116,9 @@ const TopBar = () => {
 
         {/* 右侧操作按钮 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* 语言切换 */}
+          <LanguageSwitcher />
+
           {/* 主题切换 */}
           <IconButton onClick={toggleMode} color="inherit">
             {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
@@ -142,21 +148,21 @@ const TopBar = () => {
                 }}
               >
                 <MenuItem onClick={() => { navigate(`/profile/${user._id}`); handleMenuClose(); }}>
-                  我的主页
+                  {t('profile.myProfile')}
                 </MenuItem>
                 <MenuItem onClick={() => { navigate('/upload'); handleMenuClose(); }}>
-                  上传视频
+                  {t('video.uploadVideo')}
                 </MenuItem>
                 <MenuItem onClick={() => { navigate('/about'); handleMenuClose(); }}>
-                  关于TokTik
+                  {t('nav.about')}
                 </MenuItem>
-                <MenuItem onClick={handleLogout}>退出登录</MenuItem>
+                <MenuItem onClick={handleLogout}>{t('auth.logout')}</MenuItem>
               </Menu>
             </>
           ) : (
             <Box sx={{ display: 'flex', gap: 1 }}>
               <IconButton onClick={() => navigate('/login')} color="primary">
-                登录
+                {t('auth.login')}
               </IconButton>
             </Box>
           )}
